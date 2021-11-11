@@ -3,8 +3,7 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const cors = require('cors')
 const logger = require('morgan')
-const dotenv = require('dotenv')
-dotenv.config()
+const jwt = require('jsonwebtoken')
 
 const app = express()
 
@@ -20,12 +19,24 @@ app.use(
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(express.static(path.join(__dirname, '../client/public')))
-
+app.use((req, res, next) => {
+  const authHeader = req.headers['x-access-token']
+  if (authHeader == null) {
+    return next({ status: 401, message: 'authorization missing' })
+  }
+  jwt.verify(authHeader, Constant.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) return next({ status: 403, message: err.message })
+    req.user = user
+    next()
+  })
+})
 // nb: cors settings must be included before other routes
 app.use(cors())
 
 const apiRoutes = require('./apiRoutes')(express.Router(), app)
+const authRoutes = require('./authRoutes')(express.Router(), app)
 app.use('/api', apiRoutes)
+app.use('/auth', authRoutes)
 
 app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))
