@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import api from 'api'
 
-const RadioTracker = () => {
+const RadioTracker = (props) => {
+  const [user, setUser] = useState(null)
+
+  const fetchUser = async () => {
+    const res = await api.get('user')
+    setUser(res.data)
+  }
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      fetchUser()
+    }
+  }, [])
+
   return (
     <div>
-      <p>hello world</p>
+      <p>hello {user?.id || 'world'}</p>
     </div>
   )
 }
