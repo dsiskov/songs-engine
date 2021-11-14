@@ -1,7 +1,15 @@
 'use strict'
 const { compareSync } = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { ACCESS_TOKEN_SECRET, ACCESS_TOKEN_EXPIRE } = require('../config')
+const User = require('../models/User')
+const Token = require('../models/Token')
+const { randomBytes } = require('crypto')
+
+const {
+  ACCESS_TOKEN_SECRET,
+  ACCESS_TOKEN_EXPIRE,
+  REFRESH_TOKEN_EXPIRE,
+} = require('../config')
 
 module.exports = {
   authenticate,
@@ -9,21 +17,16 @@ module.exports = {
   newUser,
 }
 
-let userDb, tokenDb
-require('../scripts/db/tables')().then((dbs) => {
-  ;({ userDb, tokenDb } = dbs)
-})
-
 async function newUser(req, res) {
-  const { username, password } = req.body
-  const user = userDb.table().findOne({ id: username })
+  const { email, password } = req.body
+  const user = await User.findOne({ email })
   if (user) {
     return res.status(403).json({
       message: 'Username is already taken',
     })
   }
-  await userDb.table().insert({ id: username, password })
-  res.status(200).send()
+  const newUser = await User.create({ email, password })
+  res.status(201).send({ user: newUser._id })
 }
 
 async function authenticate(req, res) {
@@ -33,7 +36,7 @@ async function authenticate(req, res) {
       message: 'Username or password is missing',
     })
   }
-  const user = userDb.table().findOne({ id: username })
+  const user = User.findOne({ id: username })
   if (!user) {
     return throwFailed(res, 'Authentication failed. User not found.')
   }
@@ -44,7 +47,7 @@ async function authenticate(req, res) {
       message: 'Invalid Password!',
     })
 
-  const refreshToken = await tokenDb.createToken(user.id)
+  const refreshToken = await Token.create(_generateToken(user.id))
 
   res.status(200).send({
     accessToken: jwt.sign(user.id, ACCESS_TOKEN_SECRET, {
@@ -60,9 +63,9 @@ function refreshToken(req, res) {
     return res.status(403).json({ message: 'Refresh Token is required!' })
   }
 
-  const tokenInDb = tokenDb.table.findOne({ where: { token } })
-  if (tokenDb.verifyExpiration(tokenInDb)) {
-    tokenDb.table.destroy({ where: { token } })
+  const tokenInDb = Token.findOne({ where: { token } })
+  if (tokenInDb.expiryDate.getTime() < new Date().getTime()) {
+    Token.destroy({ where: { token } })
 
     res.status(403).json({
       message: 'Refresh token was expired. Please make a new signin request',
@@ -78,4 +81,15 @@ function refreshToken(req, res) {
     accessToken,
     refreshToken: tokenInDb.token,
   })
+
+  function _generateToken(userId) {
+    const expiredAt = new Date()
+    expiredAt.setSeconds(expiredAt.getSeconds() + REFRESH_TOKEN_EXPIRE)
+
+    return {
+      token: randomBytes(32).toString('hex'),
+      userId,
+      expiryDate: expiredAt,
+    }
+  }
 }
