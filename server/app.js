@@ -4,8 +4,17 @@ const path = require('path')
 const cors = require('cors')
 const logger = require('morgan')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
+const { NODE_ENV } = require('./config')
 
 const app = express()
+
+if (NODE_ENV !== 'test') {
+  mongoose.connect(MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+}
 
 app.use(cookieParser())
 app.use(express.json())
@@ -19,7 +28,12 @@ app.use(
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(express.static(path.join(__dirname, '../client/public')))
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
+  const { url } = req
+  if (url.startsWith('/auth')) {
+    next()
+    return
+  }
   const authHeader = req.headers['x-access-token']
   if (authHeader == null) {
     return next({ status: 401, message: 'authorization missing' })
@@ -42,9 +56,4 @@ app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))
 })
 
-// start listening
-const port = process.env.PORT || 5000
-app.set('trust proxy', '127.0.0.1')
-app.listen(port, () => {
-  console.log(`listening on port ${port}`)
-})
+module.exports = app
