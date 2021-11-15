@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import api from 'api'
 
 const RadioTracker = (props) => {
-  const [user, setUser] = useState(null)
-
-  const fetchUser = async () => {
-    const res = await api.get('user')
-    setUser(res.data)
-  }
-
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      fetchUser()
-    }
-  }, [])
+  const { data, status, error, isLoading } = useQuery(`settings`, async () => {
+    const result = await api.get('settings')
+    return result.data
+  })
 
   return (
     <div>
-      <p>hello {user?.id || 'world'}</p>
+      <p>hello {data?.exampleText || 'world'}</p>
     </div>
   )
 }
