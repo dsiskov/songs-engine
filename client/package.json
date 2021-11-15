@@ -10,13 +10,15 @@
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-query": "^3.32.3",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "test:watch": "npm run test --watch --no-coverage",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -36,5 +38,23 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-react": "^7.16.0",
+    "jest": "26.6.0",
+    "msw": "^0.35.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "moduleDirectories": [
+      "node_modules",
+      "src"
+    ],
+    "testRegex": [
+      "src/.*.test.js"
+    ],
+    "maxWorkers": 4
   }
 }
