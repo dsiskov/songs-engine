@@ -1,6 +1,6 @@
 const request = require('supertest')
-const app = require('../app')
-const db = require('../test/db')
+const app = require('../../app')
+const db = require('../../utils/test/db')
 
 const agent = request.agent(app)
 

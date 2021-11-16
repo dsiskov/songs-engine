@@ -47,10 +47,9 @@ app.use((req, _res, next) => {
 // nb: cors settings must be included before other routes
 app.use(cors())
 
-const apiRoutes = require('./apiRoutes')(express.Router(), app)
-const authRoutes = require('./authRoutes')(express.Router(), app)
-app.use('/api', apiRoutes)
-app.use('/auth', authRoutes)
+const { api, auth } = require('./area/routes')
+app.use('/api', api(express.Router(), app))
+app.use('/auth', auth(express.Router(), app))
 
 app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))

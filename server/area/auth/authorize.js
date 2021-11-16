@@ -1,15 +1,15 @@
 'use strict'
 const { compareSync } = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const User = require('../models/User')
-const Token = require('../models/Token')
-const { randomBytes } = require('crypto')
+const User = require('../../models/User')
+const Token = require('../../models/Token')
+const { generateToken } = require('../../utils/auth')
 
 const {
   ACCESS_TOKEN_SECRET,
   ACCESS_TOKEN_EXPIRE,
   REFRESH_TOKEN_EXPIRE,
-} = require('../config')
+} = require('../../config')
 
 module.exports = {
   authenticate,
@@ -47,7 +47,9 @@ async function authenticate(req, res) {
       message: 'Invalid Password!',
     })
 
-  const refreshToken = await Token.create(_generateToken(user.id))
+  const refreshToken = await Token.create(
+    generateToken(user.id, REFRESH_TOKEN_EXPIRE)
+  )
 
   res.status(200).send({
     accessToken: jwt.sign(user.id, ACCESS_TOKEN_SECRET, {
@@ -81,15 +83,4 @@ function refreshToken(req, res) {
     accessToken,
     refreshToken: tokenInDb.token,
   })
-
-  function _generateToken(userId) {
-    const expiredAt = new Date()
-    expiredAt.setSeconds(expiredAt.getSeconds() + REFRESH_TOKEN_EXPIRE)
-
-    return {
-      token: randomBytes(32).toString('hex'),
-      userId,
-      expiryDate: expiredAt,
-    }
-  }
 }
