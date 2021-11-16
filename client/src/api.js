@@ -4,8 +4,8 @@ const baseURL = 'http://localhost:8080/api'
 const instance = axios.create({
   baseURL,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 })
 
 instance.interceptors.request.use(
@@ -38,7 +38,7 @@ instance.interceptors.response.use(
       originalRequest._retry = true
       try {
         const response = await instance.post('/auth/refreshtoken', {
-          refreshToken,
+          refreshToken
         })
 
         const { accessToken } = response.data

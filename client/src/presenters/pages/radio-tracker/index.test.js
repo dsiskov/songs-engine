@@ -7,9 +7,9 @@ const mocks = [
     method: 'get',
     route: 'settings',
     data: {
-      exampleText: 'dummy-data',
-    },
-  },
+      exampleText: 'dummy-data'
+    }
+  }
 ]
 describe('test', () => {
   it('renders page', async () => {

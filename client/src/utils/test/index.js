@@ -7,9 +7,9 @@ import { server } from 'setupTests'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: false,
-    },
-  },
+      retry: false
+    }
+  }
 })
 
 const applyMocks = (mocks) => {
@@ -36,7 +36,7 @@ const renderTest = ({ control, mocks }) => {
         <QueryClientProvider client={queryClient}>
           {rerenderUi}
         </QueryClientProvider>
-      ),
+      )
   }
 }
 
