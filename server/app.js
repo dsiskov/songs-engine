@@ -3,8 +3,8 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const cors = require('cors')
 const logger = require('morgan')
-const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
+const routes = require('./api')
 const { NODE_ENV } = require('./config')
 
 const app = express()
@@ -28,28 +28,10 @@ app.use(
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(express.static(path.join(__dirname, '../client/public')))
-app.use((req, _res, next) => {
-  const { url } = req
-  if (url.startsWith('/auth')) {
-    next()
-    return
-  }
-  const authHeader = req.headers['x-access-token']
-  if (authHeader == null) {
-    return next({ status: 401, message: 'authorization missing' })
-  }
-  jwt.verify(authHeader, Constant.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return next({ status: 403, message: err.message })
-    req.user = user
-    next()
-  })
-})
+
 // nb: cors settings must be included before other routes
 app.use(cors())
-
-const { api, auth } = require('./area/routes')
-app.use('/api', api(express.Router(), app))
-app.use('/auth', auth(express.Router(), app))
+app.use(routes())
 
 app.get('*', (_req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))
