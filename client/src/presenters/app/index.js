@@ -1,3 +1,4 @@
+import React from 'react'
 import Router from 'presenters/app/Router'
 import { BrowserRouter, Switch } from 'react-router-dom'
 import routes from 'configuration/routes'

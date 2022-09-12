@@ -3,10 +3,10 @@ import api from 'api'
 
 const mockUser = {
   username: 'user1',
-  password: '1resu',
+  password: '1resu'
 }
 
-const Login = (props) => {
+const Login = () => {
   const onSignUp = async () => {
     const res = await api.post('auth/signup', mockUser)
     console.log(res.data)
@@ -14,7 +14,7 @@ const Login = (props) => {
 
   return (
     <div>
-      <input type='button' value={'sign-up'} id='name' onClick={onSignUp} />
+      <input type="button" value={'sign-up'} id="name" onClick={onSignUp} />
     </div>
   )
 }

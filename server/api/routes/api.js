@@ -19,11 +19,13 @@ module.exports = (app) => {
   /**
    * User settings
    */
-  route.get('/settings', auth, (req, res) => {
+  route.get('/settings', async (req, res) => {
     const { user } = req
-    const settings = Settings.findOne({ user })
+
+    const settings = await Settings.findOne({ email: user })
     if (!settings) {
       return throwFailed(res, 'Settings not found.')
     }
+    return res.json({}).status(200)
   })
 }

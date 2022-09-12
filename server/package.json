@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "songs-engine-api",
   "version": "1.0.0",
   "description": "server api",
   "author": "DVox",
@@ -9,6 +9,9 @@
     "test": "jest",
     "test:watch": "npm run test -- jest --watch --no-coverage --runInBand",
     "start": "node server.js"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",

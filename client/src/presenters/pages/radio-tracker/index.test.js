@@ -7,7 +7,7 @@ const mocks = [
     method: 'get',
     route: 'settings',
     data: {
-      exampleText: 'dummy-data'
+      version: 'dummy-data'
     }
   }
 ]

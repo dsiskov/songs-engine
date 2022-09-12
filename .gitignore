@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .tech_notes
+.vscode
 
 # testing
 /client/coverage

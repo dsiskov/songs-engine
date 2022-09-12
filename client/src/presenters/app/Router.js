@@ -1,8 +1,13 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Route } from 'react-router-dom'
 import RouteComponent from 'presenters/app/RouteComponent'
 
 const Router = ({ routes }) => {
+  Router.propTypes = {
+    routes: PropTypes.arrayOf(PropTypes.object)
+  }
+
   return (
     <React.Fragment>
       {routes.map((route, index) => (

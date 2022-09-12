@@ -5,7 +5,7 @@ const cors = require('cors')
 const logger = require('morgan')
 const mongoose = require('mongoose')
 const routes = require('./api')
-const { NODE_ENV } = require('./config')
+const { NODE_ENV, MONGO_URL } = require('./config')
 
 const app = express()
 
@@ -14,7 +14,11 @@ if (NODE_ENV !== 'test') {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
+  mongoose.connection.on('error', (err) => {
+    console.error(`mongo error: ${err.message}`)
+  })
 }
+mongoose.Promise = global.Promise
 
 app.use(cookieParser())
 app.use(express.json())
