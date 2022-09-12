@@ -5,7 +5,7 @@ import { renderTest } from 'utils/test/index'
 const mocks = [
   {
     method: 'get',
-    route: 'settings',
+    route: 'version',
     data: {
       version: 'dummy-data'
     }
