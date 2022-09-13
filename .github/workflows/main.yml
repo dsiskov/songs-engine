@@ -9,32 +9,39 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: checkout-repo
         uses: actions/checkout@v3
 
-      - name: Build Client
-        #id: build-client
+      - name: build-and-test
         run: |
           cd client
+          export REACT_APP_BACKEND_API=https://${{secrets.HEROKU_APP_NAME}}.herokuapp.com/api
           npm i
           npm run test
           npm run build
 
-      - name: Build Server
-        #id: build-server
-        run: |
-          cd server
+          cd ../server
+          mkdir assets
           npm i
           npm run test
-      
-      - name: Deploy
+          cd ..
+
+          cp -r client/build server/assets/
+          cp -r client/public server/assets/
+
+      - name: deploy
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
-          heroku_email: ${{secrets.MY_EMAIL}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
           appdir: "server"
+          docker_build_args: |
+            NODE_ENV
+            PORT
+            MONGO_URL
         env:
           NODE_ENV: production
-          PORT: 8083
+          PORT: 8080
           MONGO_URL: ${{ secrets.MONGO_URL }}

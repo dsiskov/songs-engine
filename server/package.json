@@ -1,10 +1,10 @@
 {
-  "name": "songs-engine-api",
+  "name": "songs-engine",
   "version": "1.0.0",
   "description": "server api",
   "author": "DVox",
   "license": "ISC",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest",
     "test:watch": "npm run test -- jest --watch --no-coverage --runInBand",

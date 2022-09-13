@@ -30,15 +30,15 @@ app.use(
 )
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')))
-app.use(express.static(path.join(__dirname, '../client/public')))
+app.use(express.static(path.join(__dirname, 'assets/build')))
+app.use(express.static(path.join(__dirname, 'assets/public')))
 
 // nb: cors settings must be included before other routes
 app.use(cors())
 app.use(routes())
 
 app.get('*', (_req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'))
+  res.sendFile(path.join(__dirname, 'assets/build/index.html'))
 })
 
 module.exports = app
